@@ -1,0 +1,61 @@
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+using namespace std;
+
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        vector<vector<int>> result;
+        int n = nums.size();
+
+        // 1. Sort the array to easily handle duplicates and use two pointers.
+        sort(nums.begin(), nums.end());
+
+        // Iterate through the array, fixing the first element of the triplet.
+        // We only need to go up to n-2 because we need at least two more elements (left/right).
+        for (int i = 0; i < n - 2; ++i) {
+            // 2. Skip duplicate first elements to avoid duplicate triplets.
+            // If the current element is the same as the previous one, skip it.
+            if (i > 0 && nums[i] == nums[i - 1]) {
+                continue;
+            }
+
+            // 3. Use two pointers for the remaining part of the array.
+            int left = i + 1;
+            int right = n - 1;
+            int target = -nums[i]; // We need nums[left] + nums[right] to equal -nums[i]
+
+            while (left < right) {
+                int currentSum = nums[left] + nums[right];
+
+                if (currentSum == target) {
+                    // Found a triplet!
+                    result.push_back({nums[i], nums[left], nums[right]});
+
+                    // 4. Skip duplicates for the second and third elements.
+                    // Move left pointer forward while it's the same as the next element.
+                    while (left < right && nums[left] == nums[left + 1]) {
+                        left++;
+                    }
+                    // Move right pointer backward while it's the same as the previous element.
+                    while (left < right && nums[right] == nums[right - 1]) {
+                        right--;
+                    }
+
+                    // Move pointers to find the next potential pair.
+                    left++;
+                    right--;
+                } else if (currentSum < target) {
+                    // Sum is too small, need a larger number, so move left pointer right.
+                    left++;
+                } else { // currentSum > target
+                    // Sum is too large, need a smaller number, so move right pointer left.
+                    right--;
+                }
+            }
+        }
+        return result;
+    }
+};
